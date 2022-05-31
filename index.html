@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>three.js webgl - geometry - extrude shapes</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.js"
+        integrity="sha512-+maVcOki4j7Zo1VOqbhjH/fKV7iuE9WYMdhObx1ozxz2xu3qZMVCGHOAZKLKLksakyaWllQzafnLZSGBRl3lRg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.module.js"
+        integrity="sha512-4fG8RHM7G05KGuPlUve9+bkQgXAXnoEYHpM/k1IT2Qhsxq2KkoYIt3L5WQx65lCJJ3udrbjrlbOxEzvEl7unZA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+</head>
+
+<body>
+    <div id="info"><br />
+        <b>R -</b><span style="color:red"> Set color to Red</span>
+        <b>G -</b><span style="color:green"> Set color to Green</span>
+        <b>B -</b><span style="color:blue"> Set color to Blue</span>
+        <p></p>
+        <b>X -</b> Rotate heart along X-axis
+        <b>Y -</b> Rotate heart along Y-axis
+        <b>Z -</b> Rotate heart along Z-axis
+        <p></p>
+        <button id="reset" onclick="resetClick()" style="font-size:1.5rem;">Click here to reset heart</button>
+
+    </div>
+
+    <script>
+
+        var scene = new THREE.Scene();
+        const fov = 45;
+        const aspect = 2;  // the canvas default
+        const near = 0.1;
+        const far = 100;
+        const camera = new THREE.PerspectiveCamera(fov, aspect, near, far)
+        camera.position.z = 60;
+        var renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setClearColor("#e5e5e5")
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        document.body.appendChild(renderer.domElement);
+
+        var shape = new THREE.Shape();
+        const x = -2.5;
+        const y = -5;
+        shape.moveTo(x + 2.5, y + 2.5);
+        shape.bezierCurveTo(x + 2.5, y + 2.5, x + 2, y, x, y);
+        shape.bezierCurveTo(x - 3, y, x - 3, y + 3.5, x - 3, y + 3.5);
+
+        shape.bezierCurveTo(x - 3, y + 5.5, x - 1.5, y + 7.7, x + 2.5, y + 9.5);
+        shape.bezierCurveTo(x + 6, y + 7.7, x + 8, y + 4.5, x + 8, y + 3.5);
+
+        shape.bezierCurveTo(x + 8, y + 3.5, x + 8, y, x + 5, y);
+        shape.bezierCurveTo(x + 3.5, y, x + 2.5, y + 2.5, x + 2.5, y + 2.5);
+
+        const extrudeSettings = {
+            steps: 4,  // ui: steps
+            depth: 4,  // ui: depth
+            bevelEnabled: true,  // ui: bevelEnabled
+            bevelThickness: 1,  // ui: bevelThickness
+            bevelSize: 1,  // ui: bevelSize
+            bevelSegments: 4,  // ui: bevelSegments
+        };
+        const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+        var material = new THREE.MeshBasicMaterial({ color: "white" });
+        var mesh = new THREE.Mesh(geometry, material);
+        mesh.rotation.set(0, 0, Math.PI);
+        scene.add(mesh);
+        renderer.render(scene, camera);
+
+        document.addEventListener('keydown', (event) => {
+            switch (event.keyCode) {
+
+                case 82: /*r*/
+                    material.color.set("red");
+                    break;
+                case 71: /*g*/
+                    material.color.set("green");
+                    break;
+                case 66: /*b*/
+                    material.color.set("blue");
+                    break;
+                case 88: /*x*/
+                    mesh.rotation.x += 30;
+                    break;
+                case 89: /*y*/
+                    mesh.rotation.y += 30;
+                    break;
+                case 90: /*z*/
+                    mesh.rotation.z += 30;
+                    break;
+            }
+            renderer.render(scene, camera);
+        }, false);
+
+        function resetClick() {
+            mesh.rotation.set(0, 0, Math.PI);
+            material.color.set("white");
+            renderer.render(scene, camera);
+        }
+
+    </script>
+</body>
+ 
+</html>
